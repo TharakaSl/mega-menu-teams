@@ -1,14 +1,17 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import ReactDOM from 'react-dom';
+import {useHistory} from 'react-router-dom';
 import RightPane from './RightPane';
 
 export const Dashboard: React.FC = () => {
+    const history = useHistory();
+    const handleOnClick = useCallback(() => history.push('/settings'), [history]);
+
     return (
         <div className="navbar">
-            <a href="#home">Home</a>
-            <a href="#news">News</a>
             <div className="dropdown">
-                <button className="dropbtn">Dropdown
+                <button className="dropbtn">
+                    Dashboard
                     <i className="fa fa-caret-down"></i>
                 </button>
                 <div className="dropdown-content">
@@ -29,9 +32,9 @@ export const Dashboard: React.FC = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
+            <a onClick={handleOnClick}>Settings</a>
         </div>
     );
 };
