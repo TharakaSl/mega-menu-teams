@@ -5,20 +5,18 @@ import {
   Grid,
   Segment,
   Header,
-  List,
-  Avatar,
   Flex,
   Label,
   Button,
   Input,
 } from "@fluentui/react-northstar";
 import { AddIcon, SearchIcon } from "@fluentui/react-icons-northstar";
-import { administratorItems, settingsItems } from "../utils/SidePanelData";
 import TreeView from "@material-ui/lab/TreeView";
 import TreeItem from "@material-ui/lab/TreeItem";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { useHistory } from "react-router-dom";
+import LeftSegment from "./LeftSegment";
 
 const Settings = () => {
   const history = useHistory();
@@ -141,27 +139,7 @@ const Settings = () => {
     <div>
       <Dashboard />
       <Grid columns="repeat(4, 1fr)" rows="600px">
-        <Segment
-          styles={{
-            gridColumn: "span 1",
-            border: "1px",
-          }}
-        >
-          <Flex gap="gap.small">
-            <Avatar label="1" name="Settings" style={{ marginTop: "12px" }} />
-            <Header as="h3" content="Settings" />
-          </Flex>
-          <List items={settingsItems} />
-          <Flex gap="gap.small">
-            <Avatar
-              label="2"
-              name="Administration"
-              style={{ marginTop: "12px" }}
-            />
-            <Header as="h3" content="Administration" />
-          </Flex>
-          <List items={administratorItems} />
-        </Segment>
+        <LeftSegment />
         <Segment
           content="Content"
           styles={{
