@@ -1,105 +1,67 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Dashboard from "./Dashboard";
 import {
-  Layout,
   Grid,
   Segment,
   Header,
-  Image,
-  ButtonGroup,
   List,
   Avatar,
   Flex,
   Label,
   Button,
   Input,
-  Tree,
 } from "@fluentui/react-northstar";
-import { OutdentIcon, AddIcon, SearchIcon, TriangleDownIcon, TriangleEndIcon} from "@fluentui/react-icons-northstar";
+import {
+  AddIcon,
+  SearchIcon,
+} from "@fluentui/react-icons-northstar";
+import { administratorItems, settingsItems } from "../utils/SidePanelData";
+import TreeView from "@material-ui/lab/TreeView";
+import TreeItem from "@material-ui/lab/TreeItem";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
-const actions = (
-  <ButtonGroup
-    buttons={[
-      {
-        icon: <OutdentIcon />,
-        iconOnly: true,
-        text: true,
-        title: "Check",
-        key: "check",
-      },
-    ]}
-  />
-);
-
-const settingsItems = [
-  {
-    key: "step1",
-    header: "Step 1",
-    media: actions,
-  },
-  {
-    key: "step2",
-    header: "Step 2",
-    media: actions,
-  },
-  {
-    key: "step3",
-    header: "Step 3",
-    media: actions,
-  },
-];
-
-const administratorItems = [
-  {
-    key: "licensing",
-    header: "Licensing",
-    media: actions,
-  },
-  {
-    key: "administrators",
-    header: "Administrators",
-    media: actions,
-  },
-];
-
-const treeItems = [
-  {
-    id: 'nav-1',
-    title: 'Navigation Item 1',
-    items: [
-      {
-        id: 'sub-nav-1',
-        title: 'Sub Navigation Item 1',
-        items: [
-          {
-            id: 'sub-sub-nav-1',
-            title: 'Sub sub Navigation Item 1',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'nav-2',
-    title: 'Navigation Item 2',
-    items: [
-      {
-        id: 'sub-nav-2',
-        title: 'Sub Navigation Item 2',
-      },
-    ],
-  },
-]
-
-const titleRenderer = (Component: any, { content, expanded, open, hasSubtree, ...restProps } : any) => (
-  <Component expanded={expanded} hasSubtree={hasSubtree} {...restProps}>
-    {expanded ? <TriangleDownIcon /> : <TriangleEndIcon />}
-    {content}
-  </Component>
-)
 
 export const Settings: React.FC = () => {
+
+  const [tree, setTreeItems] = useState([]);
+
+  useEffect(() => {
+    console.log('dd')
+    let treeItems: any = window.localStorage.getItem("treeItems");
+    let data: any = JSON.parse(treeItems);
+    setTreeItems(data);
+  });
+
+  const getTreeItemsFromData = (treeItems: any) => {
+    return treeItems.map((treeItemData:any) => {
+      let children = undefined;
+      if (treeItemData.children && treeItemData.children.length > 0) {
+        children = getTreeItemsFromData(treeItemData.children);
+      }
+      return (
+        <TreeItem
+          key={treeItemData.id}
+          nodeId={treeItemData.id}
+          label={treeItemData.name}
+          children={children}
+        />
+      );
+    });
+  };
+
+  const DataTreeView = (treeItems:any) => {
+    return (
+      <TreeView
+        defaultCollapseIcon={<ExpandMoreIcon />}
+        defaultExpandIcon={<ChevronRightIcon />}
+      >
+        {getTreeItemsFromData(treeItems)}
+      </TreeView>
+    );
+  };
+
   return (
     <div>
       <Dashboard />
@@ -138,13 +100,24 @@ export const Settings: React.FC = () => {
             color="white"
             content="Here is an example of how a section can be used to group inputs"
           />
-          <br/><br/>
-          <Flex gap="gap.small" >
-            <Button icon={<AddIcon />} primary content="Add Entry" iconPosition="before"/>
-            <Input icon={<SearchIcon />} placeholder="Search for a navigation entry" width= "1500px" />
+          <br />
+          <br />
+          <Flex gap="gap.small">
+            <Button
+              icon={<AddIcon />}
+              primary
+              content="Add Entry"
+              iconPosition="before"
+            />
+            <Input
+              icon={<SearchIcon />}
+              placeholder="Search for a navigation entry"
+              width="1500px"
+            />
           </Flex>
-          <br/>
-          <Tree aria-label="Navigation Entries" items={treeItems} renderItemTitle={titleRenderer} />
+          <br />
+          <DataTreeView treeItems={tree} />
+
           <Flex gap="gap.small" style={{ float: "right" }}>
             <Button content="Discard" />
             <Button primary content="Save" />

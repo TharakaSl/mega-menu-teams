@@ -1,11 +1,23 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import {useHistory} from 'react-router-dom';
+import { defaultTreeItems } from '../utils/SidePanelData';
 import RightPane from './RightPane';
 
 export const Dashboard: React.FC = () => {
     const history = useHistory();
     const handleOnClick = useCallback(() => history.push('/settings'), [history]);
+
+    useEffect(() => {
+
+        var treeItems = window.localStorage.getItem('treeItems');
+        //set defaultTree
+        if(!treeItems) {
+            let tree = defaultTreeItems;
+            window.localStorage.setItem('treeItems', JSON.stringify(tree));
+        }
+          
+    })
 
     return (
         <div className="navbar">
