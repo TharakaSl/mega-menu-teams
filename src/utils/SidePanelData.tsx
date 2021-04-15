@@ -74,7 +74,7 @@ const defaultTreeItems = [
     children: [
       {
         id: '2.1',
-        name: 'Sub Navigation Item 2',
+        name: 'Sub Navigation Item 1',
         children: [],
       },
     ],

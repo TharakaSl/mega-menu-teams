@@ -18,23 +18,28 @@ import TreeView from "@material-ui/lab/TreeView";
 import TreeItem from "@material-ui/lab/TreeItem";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import { ContactlessOutlined } from "@material-ui/icons";
+import { useHistory } from "react-router-dom";
 
 const Settings = () => {
+  const history = useHistory();
+
   const [tree, setTreeItems] = useState([]);
-  const [selectedItem, selectedTreeItem] = useState('');
-  const [selectedItemText, selectedTreeItemText] = useState('');
+  const [selectedItem, selectedTreeItem] = useState("");
+  const [selectedItemText, selectedTreeItemText] = useState("");
 
   useEffect(() => {
     console.log("dd");
     let treeItems: any = window.localStorage.getItem("treeItems");
-    let data: any = JSON.parse(treeItems);
-    setTreeItems(data);
+    if (treeItems) {
+      let data: any = JSON.parse(treeItems);
+      setTreeItems(data);
+    }
   }, []);
 
-  const setSelectedItem = (id: string, text: string) => {
+  const onLabelItemClick = (e: any, id: string, text: string) => {
+    e.preventDefault();
     selectedTreeItem(id);
-    selectedTreeItemText(text)
+    selectedTreeItemText(text);
   };
 
   const getTreeItemsFromData = (treeItems: any) => {
@@ -49,8 +54,8 @@ const Settings = () => {
           nodeId={treeItemData.id}
           label={treeItemData.name}
           children={children}
-          onClick={() => {
-            setSelectedItem(treeItemData.id, treeItemData.name);
+          onLabelClick={(e) => {
+            onLabelItemClick(e, treeItemData.id, treeItemData.name);
           }}
         />
       );
@@ -62,6 +67,9 @@ const Settings = () => {
       <TreeView
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
+        onNodeToggle={(e) => {
+          e.preventDefault();
+        }}
       >
         {getTreeItemsFromData(treeItems)}
       </TreeView>
@@ -71,8 +79,8 @@ const Settings = () => {
   const addTreeItem = () => {
     var treeItems: any = [];
     treeItems = [...tree];
-    if(selectedItem == '') {
-      var idNext  = tree.length + 1;
+    if (selectedItem == "") {
+      var idNext = tree.length + 1;
       console.log(idNext);
 
       var nextItem: any = {
@@ -83,35 +91,51 @@ const Settings = () => {
 
       treeItems.push(nextItem);
       setTreeItems(treeItems);
-
     } else {
-
-
-      var lastIdText = '';
-      if(selectedItem.includes('.')) {
+      var lastIdText = "";
+      if (selectedItem.includes(".")) {
         var lastChar = selectedItem.slice(selectedItem.length - 1);
-        var aa = lastChar+1;
-        console.log(aa);
+        var nextId = parseInt(lastChar) + 1;
+        lastIdText = `${nextId}`;
       } else {
-        lastIdText = '1';
+        lastIdText = "1";
       }
 
-      var nextItem: any = {
-        id: `${selectedItem}.${lastIdText}`,
-        name: `Sub ${selectedItemText}`,
-        children: [],
-      };
+      if (lastIdText == "1") {
+        var nextItem: any = {
+          id: `${selectedItem}.${lastIdText}`,
+          name: `Sub Navigation Item ${
+            treeItems[parseInt(selectedItem) - 1].children.length + 1
+          }`,
+          children: [],
+        };
 
-      // treeItems.push(nextItem);
-      // setTreeItems(treeItems);
+        treeItems[parseInt(selectedItem) - 1].children.push(nextItem);
+      } else if (lastIdText == "2") {
 
-      console.log(selectedItem);
+        // var nextItem: any = {
+        //   id: `${selectedItem}.${lastIdText}`,
+        //   name: `Sub Navigation Item ${lastIdText}`,
+        //   children: [],
+        // };
+
+        // treeItems[parseInt(selectedItem) - 1].children[
+        //   parseInt(selectedItem) - 1
+        // ].push(nextItem);
+      }
+
+      setTreeItems(treeItems);
     }
-  }
+  };
+
+  const discardChanges = () => {
+    window.location.reload();
+  };
 
   const saveData = () => {
-
-  }
+    window.localStorage.setItem("treeItems", JSON.stringify(tree));
+    window.location.reload();
+  };
 
   return (
     <div>
@@ -171,8 +195,8 @@ const Settings = () => {
           <DataTreeView treeItems={tree} />
 
           <Flex gap="gap.small" style={{ float: "right" }}>
-            <Button content="Discard" />
-            <Button primary content="Save" />
+            <Button content="Discard" onClick={discardChanges} />
+            <Button primary content="Save" onClick={saveData} />
           </Flex>
         </Segment>
       </Grid>
