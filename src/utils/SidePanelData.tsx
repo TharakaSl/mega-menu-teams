@@ -52,33 +52,35 @@ const administratorItems = [
 
 const defaultTreeItems = [
   {
-    id: 'nav-1',
+    id: '1',
     name: 'Navigation Item 1',
     children: [
       {
-        id: 'sub-nav-1',
+        id: '1.1',
         name: 'Sub Navigation Item 1',
         children: [
           {
-            id: 'sub-sub-nav-1',
+            id: '1.1.1',
             name: 'Sub sub Navigation Item 1',
+            children: []
           },
         ],
       },
     ],
   },
   {
-    id: 'nav-2',
+    id: '2',
     name: 'Navigation Item 2',
     children: [
       {
-        id: 'sub-nav-2',
+        id: '2.1',
         name: 'Sub Navigation Item 2',
+        children: [],
       },
     ],
   },
   {
-    id: 'nav-3',
+    id: '3',
     name: 'Navigation Item 3',
     children: [],
   },

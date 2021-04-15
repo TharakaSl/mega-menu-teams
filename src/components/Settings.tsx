@@ -18,37 +18,12 @@ import TreeView from "@material-ui/lab/TreeView";
 import TreeItem from "@material-ui/lab/TreeItem";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-
-const getTreeItemsFromData = (treeItems: any) => {
-  return treeItems.map((treeItemData: any) => {
-    let children = undefined;
-    if (treeItemData.children && treeItemData.children.length > 0) {
-      children = getTreeItemsFromData(treeItemData.children);
-    }
-    return (
-      <TreeItem
-        key={treeItemData.id}
-        nodeId={treeItemData.id}
-        label={treeItemData.name}
-        children={children}
-      />
-    );
-  });
-};
-
-const DataTreeView = ({ treeItems }: any) => {
-  return (
-    <TreeView
-      defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}
-    >
-      {getTreeItemsFromData(treeItems)}
-    </TreeView>
-  );
-};
+import { ContactlessOutlined } from "@material-ui/icons";
 
 const Settings = () => {
   const [tree, setTreeItems] = useState([]);
+  const [selectedItem, selectedTreeItem] = useState('');
+  const [selectedItemText, selectedTreeItemText] = useState('');
 
   useEffect(() => {
     console.log("dd");
@@ -56,6 +31,87 @@ const Settings = () => {
     let data: any = JSON.parse(treeItems);
     setTreeItems(data);
   }, []);
+
+  const setSelectedItem = (id: string, text: string) => {
+    selectedTreeItem(id);
+    selectedTreeItemText(text)
+  };
+
+  const getTreeItemsFromData = (treeItems: any) => {
+    return treeItems.map((treeItemData: any) => {
+      let children = undefined;
+      if (treeItemData.children && treeItemData.children.length > 0) {
+        children = getTreeItemsFromData(treeItemData.children);
+      }
+      return (
+        <TreeItem
+          key={treeItemData.id}
+          nodeId={treeItemData.id}
+          label={treeItemData.name}
+          children={children}
+          onClick={() => {
+            setSelectedItem(treeItemData.id, treeItemData.name);
+          }}
+        />
+      );
+    });
+  };
+
+  const DataTreeView = ({ treeItems }: any) => {
+    return (
+      <TreeView
+        defaultCollapseIcon={<ExpandMoreIcon />}
+        defaultExpandIcon={<ChevronRightIcon />}
+      >
+        {getTreeItemsFromData(treeItems)}
+      </TreeView>
+    );
+  };
+
+  const addTreeItem = () => {
+    var treeItems: any = [];
+    treeItems = [...tree];
+    if(selectedItem == '') {
+      var idNext  = tree.length + 1;
+      console.log(idNext);
+
+      var nextItem: any = {
+        id: `${idNext}`,
+        name: `Navigation Item ${idNext}`,
+        children: [],
+      };
+
+      treeItems.push(nextItem);
+      setTreeItems(treeItems);
+
+    } else {
+
+
+      var lastIdText = '';
+      if(selectedItem.includes('.')) {
+        var lastChar = selectedItem.slice(selectedItem.length - 1);
+        var aa = lastChar+1;
+        console.log(aa);
+      } else {
+        lastIdText = '1';
+      }
+
+      var nextItem: any = {
+        id: `${selectedItem}.${lastIdText}`,
+        name: `Sub ${selectedItemText}`,
+        children: [],
+      };
+
+      // treeItems.push(nextItem);
+      // setTreeItems(treeItems);
+
+      console.log(selectedItem);
+    }
+  }
+
+  const saveData = () => {
+
+  }
 
   return (
     <div>
@@ -103,6 +159,7 @@ const Settings = () => {
               primary
               content="Add Entry"
               iconPosition="before"
+              onClick={addTreeItem}
             />
             <Input
               icon={<SearchIcon />}
