@@ -12,55 +12,50 @@ import {
   Button,
   Input,
 } from "@fluentui/react-northstar";
-import {
-  AddIcon,
-  SearchIcon,
-} from "@fluentui/react-icons-northstar";
+import { AddIcon, SearchIcon } from "@fluentui/react-icons-northstar";
 import { administratorItems, settingsItems } from "../utils/SidePanelData";
 import TreeView from "@material-ui/lab/TreeView";
 import TreeItem from "@material-ui/lab/TreeItem";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
+const getTreeItemsFromData = (treeItems: any) => {
+  return treeItems.map((treeItemData: any) => {
+    let children = undefined;
+    if (treeItemData.children && treeItemData.children.length > 0) {
+      children = getTreeItemsFromData(treeItemData.children);
+    }
+    return (
+      <TreeItem
+        key={treeItemData.id}
+        nodeId={treeItemData.id}
+        label={treeItemData.name}
+        children={children}
+      />
+    );
+  });
+};
 
-export const Settings: React.FC = () => {
+const DataTreeView = ({ treeItems }: any) => {
+  return (
+    <TreeView
+      defaultCollapseIcon={<ExpandMoreIcon />}
+      defaultExpandIcon={<ChevronRightIcon />}
+    >
+      {getTreeItemsFromData(treeItems)}
+    </TreeView>
+  );
+};
 
+const Settings = () => {
   const [tree, setTreeItems] = useState([]);
 
   useEffect(() => {
-    console.log('dd')
+    console.log("dd");
     let treeItems: any = window.localStorage.getItem("treeItems");
     let data: any = JSON.parse(treeItems);
     setTreeItems(data);
-  });
-
-  const getTreeItemsFromData = (treeItems: any) => {
-    return treeItems.map((treeItemData:any) => {
-      let children = undefined;
-      if (treeItemData.children && treeItemData.children.length > 0) {
-        children = getTreeItemsFromData(treeItemData.children);
-      }
-      return (
-        <TreeItem
-          key={treeItemData.id}
-          nodeId={treeItemData.id}
-          label={treeItemData.name}
-          children={children}
-        />
-      );
-    });
-  };
-
-  const DataTreeView = (treeItems:any) => {
-    return (
-      <TreeView
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
-      >
-        {getTreeItemsFromData(treeItems)}
-      </TreeView>
-    );
-  };
+  }, []);
 
   return (
     <div>
